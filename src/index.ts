@@ -1,7 +1,7 @@
 import type {Plugin} from "rollup";
-import { writeFile, readFile } from 'node:fs/promises';
-import { resolve } from "node:path";
-import { existsSync, mkdirSync } from "node:fs";
+import fsp from 'fs/promises';
+import path from "path";
+import fs from "fs";
 
 type OutputOptions = {
   fileName?: string,
@@ -37,15 +37,15 @@ export default function packageProcess(options?: PackageProcessOptions): Plugin 
     generateBundle: async function(outOptions) {
       const workingDir = process.cwd();
       const inputFile = options?.inputFileName || "package.json";
-      const inputFilePath = resolve(workingDir, inputFile);
-      const inputExists = existsSync(inputFilePath);
+      const inputFilePath = path.resolve(workingDir, inputFile);
+      const inputExists = fs.existsSync(inputFilePath);
 
       if (!inputExists) {
         throw Error(`Could not resolve input file: "${inputFilePath}"`);
       }
 
       const outDir = options?.output?.dir
-        ? resolve(workingDir, options?.output?.dir)
+        ? path.resolve(workingDir, options?.output?.dir)
         : outOptions.dir;
 
       if (!outDir) {
@@ -53,18 +53,18 @@ export default function packageProcess(options?: PackageProcessOptions): Plugin 
       }
 
       const outFile = options?.output?.fileName || inputFile
-      const outFilePath = resolve(outDir, outFile);
+      const outFilePath = path.resolve(outDir, outFile);
 
       // check if file should be created
-      if (!existsSync(outFilePath) || options?.output?.replaceExisting) {
+      if (!fs.existsSync(outFilePath) || options?.output?.replaceExisting) {
         // check if the output directory exists, if not create it
-        if (!existsSync(outDir)) {
+        if (!fs.existsSync(outDir)) {
           // make dir
-          mkdirSync(outDir, 0o744);
+          fs.mkdirSync(outDir, 0o744);
         }
 
         // read existing file
-        const inPackage = await readFile(inputFilePath, 'utf8');
+        const inPackage = await fsp.readFile(inputFilePath, 'utf8');
         const inDeserialized = deserialize(inPackage);
 
         const processed = options?.process
@@ -72,7 +72,7 @@ export default function packageProcess(options?: PackageProcessOptions): Plugin 
           : defaultProcess(inDeserialized);
 
         const outSerialized = serialize(processed);
-        await writeFile(outFilePath, outSerialized);
+        await fsp.writeFile(outFilePath, outSerialized);
       } else {
         throw Error(`A file named ${outFile} already exists at ${outDir}`)
       }
