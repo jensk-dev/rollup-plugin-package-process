@@ -1,7 +1,7 @@
 {
   "name": "@jensk/rollup-plugin-package-process",
   "description": "A barebones package.json copier and processor",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": false,
   "scripts": {
     "build": "tsc",
@@ -15,6 +15,11 @@
     "rollup-plugin",
     "package-process",
     "package.json"
+  ],
+  "files": [
+    "dist/*",
+    "README.md",
+    "LICENCE"
   ],
   "license": "MIT",
   "homepage": "https://github.com/jensk-dev/rollup-plugin-package-process",
