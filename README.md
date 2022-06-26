@@ -6,7 +6,7 @@ This plugin is incredibly barebones and doesn't hold the hand of the developer i
 
 ## Example Usage
 
-```
+```js
 // rollup.config.js
 import packageProcess from "@jensk/rollup-plugin-package-process";
 
