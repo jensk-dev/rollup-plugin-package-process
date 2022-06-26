@@ -1,5 +1,5 @@
 {
-  "name": "rollup-plugin-package-process",
+  "name": "@jensk/rollup-plugin-package-process",
   "description": "A barebones package.json copier and processor",
   "version": "0.0.1",
   "private": false,
