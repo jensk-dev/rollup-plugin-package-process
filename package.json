@@ -5,7 +5,7 @@
   "private": false,
   "scripts": {
     "build": "tsc",
-    "publish": "pnpm build && pnpm publish --access=public"
+    "release": "pnpm build && pnpm publish --access=public"
   },
   "main": "dist/index.js",
   "type": "module",
