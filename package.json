@@ -1,7 +1,7 @@
 {
   "name": "@jensk/rollup-plugin-package-process",
   "description": "A barebones package.json copier and processor",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "private": false,
   "scripts": {
     "build": "rollup -c rollup.config.js",
@@ -37,8 +37,5 @@
     "rollup-plugin-typescript2": "^0.32.1",
     "tslib": "^2.4.0",
     "typescript": "^4.7.4"
-  },
-  "dependencies": {
-    "remove": "^0.1.5"
   }
 }
