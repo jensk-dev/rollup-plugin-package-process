@@ -5,7 +5,7 @@ import typescript from "rollup-plugin-typescript2";
 const dir = resolve(__dirname, "dist");
 
 export default defineConfig({
-  input: 'src/index.ts',
+  input: "src/index.ts",
   external: ["path", "fs", "fs/promises"],
   output: [
     {
@@ -19,7 +19,7 @@ export default defineConfig({
       sourcemap: true,
       file: resolve(dir, "index.mjs"),
       format: "es",
-    }
+    },
   ],
-  plugins: [typescript()]
-})
+  plugins: [typescript()],
+});

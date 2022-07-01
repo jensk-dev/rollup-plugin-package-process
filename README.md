@@ -15,19 +15,19 @@ export default {
   plugins: [
     packageProcess({
       output: {
-        replaceExisting: true
+        replaceExisting: true,
       },
       process: (inputPackage) => {
         inputPackage.peerDependencies = inputPackage.dependencies;
-        
+
         delete inputPackage.devDependencies;
         delete inputPackage.dependencies;
         delete inputPackage.scripts;
 
         return inputPackage;
-      }
-    })
-  ]
+      },
+    }),
+  ],
 };
 ```
 
@@ -35,34 +35,34 @@ export default {
 
 ### inputFileName
 
-Type: ``string?`` | Default: ``package.json``
+Type: `string?` | Default: `package.json`
 
-The file's name to process is relative to the project's working directory (usually the root). By default, the value is ``package.json``.
+The file's name to process is relative to the project's working directory (usually the root). By default, the value is `package.json`.
 
 ### output
 
-Type: ``OutputOptions?`` | Default: ``undefined``
+Type: `OutputOptions?` | Default: `undefined`
 
 #### fileName
 
-Type: ``string?`` | Default: ``options.inputFileName``
+Type: `string?` | Default: `options.inputFileName`
 
 Used to specify the name to use for the output file. Defaults to [options.inputFileName](#inputfilename)
 
 #### dir
 
-Type: ``string?`` | Default: ``rollup.output.dir``
+Type: `string?` | Default: `rollup.output.dir`
 
-Specifies the output directory of the processed ``package.json`` file. ``dir`` defaults to the output directory specified in the rollup output configuration.
+Specifies the output directory of the processed `package.json` file. `dir` defaults to the output directory specified in the rollup output configuration.
 
 #### replaceExisting
 
-Type: ``boolean?`` | Default: ``undefined``
+Type: `boolean?` | Default: `undefined`
 
-If defined, ``replaceExisting`` indicates whether an existing file at the [output directory](#dir) should be overwritten.
+If defined, `replaceExisting` indicates whether an existing file at the [output directory](#dir) should be overwritten.
 
 ### process
 
-Type ``(inputPackage: PackageDefinition) => PackageDefinition`` | Default: ``undefined``
+Type `(inputPackage: PackageDefinition) => PackageDefinition` | Default: `undefined`
 
 A function that gets the contents of the input file and returns the output used to store at the [output location](#output). You should use this method to process the `package.json` by, for instance, deleting or altering existing fields or adding new ones. See [usage](#example-usage)

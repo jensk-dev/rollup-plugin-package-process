@@ -1,22 +1,26 @@
-import type {Plugin} from "rollup";
-import fsp from 'fs/promises';
+import type { Plugin } from "rollup";
+import fsp from "fs/promises";
 import path from "path";
 import fs from "fs";
+import { proxy } from "./ProcessProxy";
+import { green, log, yellow } from "./logger";
 
 type OutputOptions = {
-  fileName?: string,
-  dir?: string,
+  fileName?: string;
+  dir?: string;
   replaceExisting?: boolean;
-}
+};
 
-type LoosePackageDefinitionObject = {[key: string]: string | number | any[] | LoosePackageDefinitionObject}
-type PackageDefinition = LoosePackageDefinitionObject
+type LoosePackageDefinitionObject = {
+  [key: string]: string | number | any[] | LoosePackageDefinitionObject;
+};
+export type PackageDefinition = LoosePackageDefinitionObject;
 
-type PackageProcessOptions = {
+export type PackageProcessOptions = {
   inputFileName?: string;
   output?: OutputOptions;
-  process?: (inputPackage: PackageDefinition) => PackageDefinition
-}
+  process?: (inputPackage: PackageDefinition) => void;
+};
 
 function defaultProcess(inputPackage: PackageDefinition) {
   return inputPackage;
@@ -31,10 +35,12 @@ function deserialize(serializedPackageDef: string): PackageDefinition {
   return JSON.parse(serializedPackageDef);
 }
 
-export default function packageProcess(options?: PackageProcessOptions): Plugin {
+export default function packageProcess(
+  options?: PackageProcessOptions
+): Plugin {
   return {
     name: "package-process",
-    generateBundle: async function(outOptions) {
+    generateBundle: async function (outOptions) {
       const workingDir = process.cwd();
       const inputFile = options?.inputFileName || "package.json";
       const inputFilePath = path.resolve(workingDir, inputFile);
@@ -44,6 +50,9 @@ export default function packageProcess(options?: PackageProcessOptions): Plugin 
         throw Error(`Could not resolve input file: "${inputFilePath}"`);
       }
 
+      console.log("")
+      log(`Processing ${green(inputFile)}`)
+
       const outDir = options?.output?.dir
         ? path.resolve(workingDir, options?.output?.dir)
         : outOptions.dir;
@@ -52,7 +61,7 @@ export default function packageProcess(options?: PackageProcessOptions): Plugin 
         throw Error(`Could not determine output directory, is it defined?`);
       }
 
-      const outFile = options?.output?.fileName || inputFile
+      const outFile = options?.output?.fileName || inputFile;
       const outFilePath = path.resolve(outDir, outFile);
 
       // check if file should be created
@@ -64,18 +73,20 @@ export default function packageProcess(options?: PackageProcessOptions): Plugin 
         }
 
         // read existing file
-        const inPackage = await fsp.readFile(inputFilePath, 'utf8');
+        const inPackage = await fsp.readFile(inputFilePath, "utf8");
         const inDeserialized = deserialize(inPackage);
 
-        const processed = options?.process
-          ? options.process(inDeserialized)
-          : defaultProcess(inDeserialized);
+        const proxied = proxy(inDeserialized);
 
-        const outSerialized = serialize(processed);
+        options?.process
+          ? options.process(proxied)
+          : defaultProcess(proxied);
+
+        const outSerialized = serialize(inDeserialized);
         await fsp.writeFile(outFilePath, outSerialized);
       } else {
-        throw Error(`A file named ${outFile} already exists at ${outDir}`)
+        throw Error(`A file named ${outFile} already exists at ${outDir}`);
       }
-    }
+    },
   };
 }
