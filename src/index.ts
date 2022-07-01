@@ -50,8 +50,8 @@ export default function packageProcess(
         throw Error(`Could not resolve input file: "${inputFilePath}"`);
       }
 
-      console.log("")
-      log(`Processing ${green(inputFile)}`)
+      console.log("");
+      log(`Processing ${green(inputFile)}`);
 
       const outDir = options?.output?.dir
         ? path.resolve(workingDir, options?.output?.dir)
@@ -78,9 +78,7 @@ export default function packageProcess(
 
         const proxied = proxy(inDeserialized);
 
-        options?.process
-          ? options.process(proxied)
-          : defaultProcess(proxied);
+        options?.process ? options.process(proxied) : defaultProcess(proxied);
 
         const outSerialized = serialize(inDeserialized);
         await fsp.writeFile(outFilePath, outSerialized);

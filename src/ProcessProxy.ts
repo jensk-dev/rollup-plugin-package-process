@@ -10,23 +10,26 @@ const handlers: ProxyHandler<PackageDefinition> = {
     const propName = highlight(String(p));
 
     if (success) {
-        log(`${green("✔")}  Removed ${propName} (${ type === "string" || type === "number" ? oldVal : type })`)
-
+      log(
+        `${green("✔")}  Removed ${propName} (${
+          type === "string" || type === "number" ? oldVal : type
+        })`
+      );
     } else {
-        log(`${highlight(yellow("!"))} ${propName} could not be stripped`)
+      log(`${highlight(yellow("!"))} ${propName} could not be stripped`);
     }
 
     return success;
   },
   defineProperty(target, p, attributes) {
     const success = Reflect.defineProperty(target, p, attributes);
-    
+
     const propName = highlight(String(p));
 
     if (success) {
-        log(`${green("✔")}  Added ${propName} (${target[p as string]})`)
+      log(`${green("✔")}  Added ${propName} (${target[p as string]})`);
     } else {
-        log(`${highlight(yellow("!"))} ${propName} could not be added`)
+      log(`${highlight(yellow("!"))} ${propName} could not be added`);
     }
 
     return success;
@@ -39,15 +42,18 @@ const handlers: ProxyHandler<PackageDefinition> = {
     const type = typeof target[p as string];
 
     if (success) {
-        const change = type === "string" || type === "number" ? `${oldVal} → ${target[p as string]}` : type;
+      const change =
+        type === "string" || type === "number"
+          ? `${oldVal} → ${target[p as string]}`
+          : type;
 
-        if (oldVal === undefined) {
-            log(`${green("✔")}  Added ${propName} (${target[p as string]})`)
-        } else {
-            log(`${green("✔")}  Changed ${propName} (${change})`)
-        }
+      if (oldVal === undefined) {
+        log(`${green("✔")}  Added ${propName} (${target[p as string]})`);
+      } else {
+        log(`${green("✔")}  Changed ${propName} (${change})`);
+      }
     } else {
-        log(`${highlight(yellow("!"))} ${propName} could not be altered`)
+      log(`${highlight(yellow("!"))} ${propName} could not be altered`);
     }
 
     return true;
