@@ -3,9 +3,11 @@
   "description": "A barebones package.json copier and processor",
   "version": "0.0.6",
   "private": false,
+  "type": "module",
   "scripts": {
     "build": "rollup -c rollup.config.js",
-    "release": "pnpm build && pnpm publish --access=public"
+    "release": "pnpm build && pnpm publish --access=public",
+    "test": "mocha test/*.test.ts"
   },
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
@@ -31,10 +33,16 @@
   ],
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.3.3",
+    "@types/chai": "^4.3.1",
+    "@types/mocha": "^9.1.1",
     "@types/node": "^18.0.0",
+    "chai": "^4.3.6",
+    "chai-spies": "^1.0.0",
+    "mocha": "^10.0.0",
     "rollup": "^2.75.7",
     "rollup-plugin-dts": "^4.2.2",
     "rollup-plugin-typescript2": "^0.32.1",
+    "ts-node": "^10.8.1",
     "tslib": "^2.4.0",
     "typescript": "^4.7.4"
   }
