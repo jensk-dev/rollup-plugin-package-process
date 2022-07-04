@@ -26,12 +26,10 @@ const BgWhite = "\u001B[47m";
 
 const prefixColor = FgCyan;
 
-function prefix() {
-  return `[${prefixColor}package-process${Reset}]:`;
-}
+const prefix = `[${prefixColor}package-process${Reset}]:`;
 
 export function log(message?: any, ...optionalParams: any[]) {
-  console.log(prefix(), message, ...optionalParams);
+  console.log(prefix, message, ...optionalParams);
 }
 
 export function highlight(text: string) {

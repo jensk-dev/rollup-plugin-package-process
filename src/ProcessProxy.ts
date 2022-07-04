@@ -1,60 +1,47 @@
 import type { PackageDefinition } from "./index";
 import { green, highlight, log, yellow } from "./logger";
 
+const propDisplayName = (text: string) => highlight(green(text));
+const propDisplayVal = <T extends {[key: string | symbol]: unknown}>(prop: string | symbol, target: T) => {
+  const type = typeof prop;
+
+  switch (type)
+  {
+    case "string":
+    case "number":
+      return target[prop];
+    default:
+      return type;
+  }
+}
+
 const handlers: ProxyHandler<PackageDefinition> = {
   deleteProperty(target, p) {
-    const oldVal = target[p as string];
-    const type = typeof oldVal;
+    const displayName = propDisplayName(String(p));
     const success = Reflect.deleteProperty(target, p);
 
-    const propName = highlight(String(p));
-
-    if (success) {
-      log(
-        `${green("✔")}  Removed ${propName} (${
-          type === "string" || type === "number" ? oldVal : type
-        })`
-      );
-    } else {
-      log(`${highlight(yellow("!"))} ${propName} could not be stripped`);
-    }
+    if (success) log(`${green("✔")}  Removed ${displayName}`);
+    else log(`${highlight(yellow("!"))} Could not remove ${displayName}`);
 
     return success;
   },
   defineProperty(target, p, attributes) {
+    const displayName = propDisplayName(String(p));
     const success = Reflect.defineProperty(target, p, attributes);
-
-    const propName = highlight(String(p));
-
-    if (success) {
-      log(`${green("✔")}  Added ${propName} (${target[p as string]})`);
-    } else {
-      log(`${highlight(yellow("!"))} ${propName} could not be added`);
-    }
+    const displayVal = propDisplayVal(p, target);
+    
+    if (success) log(`${green("✔")}  Set ${displayName} to ${displayVal}`)
+    else log(`${highlight(yellow("!"))} Could not set ${displayName}`);
 
     return success;
   },
   set(target, p, value, receiver) {
-    const oldVal = target[p as string];
+    const displayName = propDisplayName(String(p));
     const success = Reflect.set(target, p, value);
-    const propName = highlight(String(p));
-
-    const type = typeof target[p as string];
-
-    if (success) {
-      const change =
-        type === "string" || type === "number"
-          ? `${oldVal} → ${target[p as string]}`
-          : type;
-
-      if (oldVal === undefined) {
-        log(`${green("✔")}  Added ${propName} (${target[p as string]})`);
-      } else {
-        log(`${green("✔")}  Changed ${propName} (${change})`);
-      }
-    } else {
-      log(`${highlight(yellow("!"))} ${propName} could not be altered`);
-    }
+    const displayVal = propDisplayVal(p, target);
+    
+    if (success) log(`${green("✔")}  Set ${displayName} to ${displayVal}`)
+    else log(`${highlight(yellow("!"))} Could not set ${displayName}`);
 
     return true;
   },
